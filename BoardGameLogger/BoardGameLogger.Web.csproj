@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BoardGameLogger.Services\BoardGameLogger.Services.csproj" />
+  </ItemGroup>
+
 </Project>
