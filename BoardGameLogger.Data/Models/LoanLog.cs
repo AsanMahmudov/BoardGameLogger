@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,16 +10,20 @@ namespace BoardGameLogger.Data.Models
 {
     public class LoanLog
     {
-        int id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(256)]
-        string BorrowerName { get; set; } = null!;
+        public string BorrowerName { get; set; } = null!;
 
         [Required]
-        DateTime LoanDate { get; set; }
+        public DateTime LoanDate { get; set; }
 
         [Required]
-        int BoardGameId { get; set; }
+        public int BoardGameId { get; set; }
+
+        [ForeignKey(nameof(BoardGameId))]
+        public BoardGame BoardGame { get; set; } = null!;
     }
 }

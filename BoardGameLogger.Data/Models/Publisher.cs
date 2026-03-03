@@ -9,13 +9,16 @@ namespace BoardGameLogger.Data.Models
 {
     public class Publisher
     {
-        int Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         [MaxLength(256)]
         [Required]
-        string Name { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
         [MaxLength(100)]
-        string? Country { get; set; }
+        public string? Country { get; set; }
+
+        public ICollection<BoardGame> BoardGames { get; set; } = new List<BoardGame>();
     }
 }
