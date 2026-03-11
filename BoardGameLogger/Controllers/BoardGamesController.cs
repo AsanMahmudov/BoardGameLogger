@@ -42,6 +42,75 @@ namespace BoardGameLogger.Web.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create(BoardGameFormModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var publisherData = await _boardGameService.GetPublishers();
+                model.Publishers = publisherData.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                });
+
+                return View(model);
+            }
+
+            await _boardGameService.AddGameAsync(model);
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var model = await _boardGameService.GetGameByIdAsync(id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, BoardGameFormModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var publishers = await _boardGameService.GetPublishers();
+                model.Publishers = publishers.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                });
+
+
+                return View(model);
+            }
+
+            await _boardGameService.EditGameAsync(id, model);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _boardGameService.DeleteGameAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+        }
 
     }
 }

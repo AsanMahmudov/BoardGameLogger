@@ -3,6 +3,7 @@ using BoardGameLogger.Core.ViewModels;
 using BoardGameLogger.Data;
 using BoardGameLogger.Data.Models;
 using BoardGameLogger.Web.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,16 +18,16 @@ namespace BoardGameLogger.Core.Services
 
         public BoardGameService(BoardGameLoggerDbContext _context)
         {
-            this.Dbcontext = _context;
+            this._Dbcontext = _context;
         }
 
-        private BoardGameLoggerDbContext Dbcontext;
+        private BoardGameLoggerDbContext _Dbcontext;
         public async Task AddGameAsync(BoardGameFormModel model)
         {
-            bool exists = await Dbcontext.BoardGames
+            bool gameExists = await _Dbcontext.BoardGames
                 .AnyAsync(g => g.Title == model.Title && g.YearPublished == model.YearPublished);
 
-            if (exists)
+            if (gameExists)
             {
                 throw new InvalidOperationException("Board game is already in library.");
             }
@@ -43,15 +44,12 @@ namespace BoardGameLogger.Core.Services
             };
 
 
-
-            await Dbcontext.BoardGames.AddAsync(newGame);
-            await Dbcontext.SaveChangesAsync();
+            await _Dbcontext.BoardGames.AddAsync(newGame);
+            await _Dbcontext.SaveChangesAsync();
         }
-
-
         public async Task EditGameAsync(int id, BoardGameFormModel model)
         {
-            var boardGame = await Dbcontext.BoardGames.FindAsync(id);
+            var boardGame = await _Dbcontext.BoardGames.FindAsync(id);
 
             if (boardGame == null)
             {
@@ -65,12 +63,11 @@ namespace BoardGameLogger.Core.Services
             boardGame.Description = model.Description;
             boardGame.PublisherId = model.SelectedPublisherId;
 
-            await Dbcontext.SaveChangesAsync();
+            await _Dbcontext.SaveChangesAsync();
         }
-
         public async Task<IEnumerable<BoardGameIndexViewModel>> GetAllGamesAsync()
         {
-            List<BoardGameIndexViewModel> games = await Dbcontext.BoardGames
+            List<BoardGameIndexViewModel> games = await _Dbcontext.BoardGames
                 .Select(g => new BoardGameIndexViewModel
                 {
                     Id = g.Id,
@@ -81,17 +78,48 @@ namespace BoardGameLogger.Core.Services
 
             return games;
         }
-
-        public async Task<IEnumerable<PublisherSelectionViewModel>> GetPublishers()
+        public async Task<BoardGameFormModel?> GetGameByIdAsync(int id)
         {
-            List<PublisherSelectionViewModel> publishers = await Dbcontext.Publishers
-                .Select(p => new PublisherSelectionViewModel
+            BoardGameFormModel? boardGame = await _Dbcontext.BoardGames
+                .Where(g => g.Id == id)
+                .Select(g => new BoardGameFormModel
                 {
-                    Id = p.Id,
-                    Name = p.Name
-                }).ToListAsync();
+                    Title = g.Title,
+                    YearPublished = g.YearPublished,
+                    MinPlayers = g.MinPlayers,
+                    MaxPlayers = g.MaxPlayers,
+                    Description = g.Description,
+                    SelectedPublisherId = g.PublisherId
+                }).FirstOrDefaultAsync();
 
-            return publishers;
+            if (boardGame != null)
+            {
+
+                var publishers = await GetPublishers();
+
+                // Map/Cast to SelectListItem
+                boardGame.Publishers = publishers.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(), 
+                    Text = p.Name           
+                })
+                .ToList();
+            }
+            return boardGame;
+        }
+
+        public async Task DeleteGameAsync(int id)
+        {
+            var boardGame = await _Dbcontext.BoardGames.FindAsync(id);
+
+            if (boardGame == null)
+            {
+                throw new InvalidOperationException("Board game not found.");   
+            }
+
+            _Dbcontext.BoardGames.Remove(boardGame);
+            await _Dbcontext.SaveChangesAsync();
+
         }
     }
 }

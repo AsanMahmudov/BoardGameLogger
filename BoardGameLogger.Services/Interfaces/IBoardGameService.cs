@@ -14,9 +14,10 @@ namespace BoardGameLogger.Core.Interfaces
 
         Task AddGameAsync(BoardGameFormModel model);
 
+        Task<BoardGameFormModel?> GetGameByIdAsync(int id);
+
         Task EditGameAsync(int id, BoardGameFormModel model);
 
-        // We'll need this for the Create view to populate the Publisher dropdown
-        Task<IEnumerable<PublisherSelectionViewModel>> GetPublishers();
+        Task DeleteGameAsync(int id);
     }
 }
