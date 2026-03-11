@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BoardGameLogger.Services\BoardGameLogger.Services.csproj" />
+    <ProjectReference Include="..\BoardGameLogger.Services\BoardGameLogger.Core.csproj" />
   </ItemGroup>
 
 </Project>

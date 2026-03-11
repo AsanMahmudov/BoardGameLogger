@@ -17,10 +17,11 @@ namespace BoardGameLogger.Data.Models
         public string Title { get; set; } = null!;
 
         [Required]
-        public string YearPublished { get; set; } = null!;
+        public int YearPublished { get; set; };
 
         public int MinPlayers { get; set; }
 
+        [MaxLength(30)]
         public int MaxPlayers { get; set; }
 
         [MaxLength(1500)]

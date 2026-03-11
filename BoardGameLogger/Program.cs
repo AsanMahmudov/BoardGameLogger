@@ -1,3 +1,5 @@
+using BoardGameLogger.Core.Interfaces;
+using BoardGameLogger.Core.Services;
 using BoardGameLogger.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +14,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<BoardGameLoggerDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+
+builder.Services.AddScoped<IBoardGameService, BoardGameService>();
 
 var app = builder.Build();
 
