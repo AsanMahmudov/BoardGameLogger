@@ -95,15 +95,10 @@ namespace BoardGameLogger.Core.Services
             if (boardGame != null)
             {
 
-                var publishers = await GetPublishers();
+                var publishers = _Dbcontext.Publishers
+                    .Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name })
+                    .ToListAsync();
 
-                // Map/Cast to SelectListItem
-                boardGame.Publishers = publishers.Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(), 
-                    Text = p.Name           
-                })
-                .ToList();
             }
             return boardGame;
         }

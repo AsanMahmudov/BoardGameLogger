@@ -5,7 +5,6 @@ using BoardGameLogger.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,6 +58,7 @@ namespace BoardGameLogger.Core.Services
             List<PublisherViewModel> publishers = await _Dbcontext.Publishers
                 .Select(p => new PublisherViewModel
                 {
+                    Id = p.Id,
                     Name = p.Name,
                     Country = p.Country
                 })

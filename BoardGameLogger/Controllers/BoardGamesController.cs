@@ -10,6 +10,7 @@ namespace BoardGameLogger.Web.Controllers
     {
 
         private IBoardGameService _boardGameService;
+        private IPublisherService _publisherService;
 
         public BoardGamesController(IBoardGameService boardGameService)
         {
@@ -27,7 +28,7 @@ namespace BoardGameLogger.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var publisherData = await _boardGameService.GetPublishers();
+            var publisherData = await _publisherService.GetAllPublishersAsync();
 
             var model = new BoardGameFormModel
             {
@@ -47,7 +48,7 @@ namespace BoardGameLogger.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var publisherData = await _boardGameService.GetPublishers();
+                var publisherData = await _publisherService.GetAllPublishersAsync();
                 model.Publishers = publisherData.Select(p => new SelectListItem
                 {
                     Value = p.Id.ToString(),
@@ -82,7 +83,7 @@ namespace BoardGameLogger.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var publishers = await _boardGameService.GetPublishers();
+                var publishers = await _publisherService.GetAllPublishersAsync();
                 model.Publishers = publishers.Select(p => new SelectListItem
                 {
                     Value = p.Id.ToString(),
