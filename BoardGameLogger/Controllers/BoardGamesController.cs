@@ -8,20 +8,19 @@ namespace BoardGameLogger.Web.Controllers
 {
     public class BoardGamesController : Controller
     {
+        private readonly IBoardGameService _boardGameService;
+        private readonly IPublisherService _publisherService;
 
-        private IBoardGameService _boardGameService;
-        private IPublisherService _publisherService;
-
-        public BoardGamesController(IBoardGameService boardGameService)
+        public BoardGamesController(IBoardGameService boardGameService, IPublisherService publisherService)
         {
             _boardGameService = boardGameService;
+            _publisherService = publisherService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var boardGames = await _boardGameService.GetAllGamesAsync();
-
             return View(boardGames);
         }
 
@@ -32,11 +31,10 @@ namespace BoardGameLogger.Web.Controllers
 
             var model = new BoardGameFormModel
             {
-
                 Publishers = publisherData.Select(p => new SelectListItem
                 {
                     Value = p.Id.ToString(),
-                    Text = p.Name            
+                    Text = p.Name
                 })
             };
 
@@ -62,8 +60,6 @@ namespace BoardGameLogger.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -74,9 +70,15 @@ namespace BoardGameLogger.Web.Controllers
                 return NotFound();
             }
 
+            var publisherData = await _publisherService.GetAllPublishersAsync();
+            model.Publishers = publisherData.Select(p => new SelectListItem
+            {
+                Value = p.Id.ToString(),
+                Text = p.Name
+            });
+
             return View(model);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id, BoardGameFormModel model)
@@ -90,17 +92,35 @@ namespace BoardGameLogger.Web.Controllers
                     Text = p.Name
                 });
 
-
                 return View(model);
             }
 
             await _boardGameService.EditGameAsync(id, model);
-
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
+        {
+            var game = await _boardGameService.GetGameByIdAsync(id);
+
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new BoardGameIndexViewModel
+            {
+                Id = id,
+                Title = game.Title,
+                YearPublished = game.YearPublished
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
@@ -112,6 +132,5 @@ namespace BoardGameLogger.Web.Controllers
                 return NotFound();
             }
         }
-
     }
 }
