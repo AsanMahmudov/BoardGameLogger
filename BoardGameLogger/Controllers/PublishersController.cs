@@ -65,8 +65,6 @@ namespace BoardGameLogger.Web.Controllers
             }
             catch (InvalidOperationException)
             {
-                // This handles cases where the publisher doesn't exist 
-                // or has database-level foreign key constraints
                 return NotFound();
             }
         }
