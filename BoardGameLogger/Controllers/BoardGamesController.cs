@@ -143,4 +143,5 @@ namespace BoardGameLogger.Web.Controllers
 
             return View(gameDetails);
         }
+    }
 }
