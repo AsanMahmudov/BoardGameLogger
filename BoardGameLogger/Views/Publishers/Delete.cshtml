@@ -1,0 +1,34 @@
+﻿@model BoardGameLogger.Core.ViewModels.PublisherViewModel
+
+@{
+    ViewData["Title"] = "Delete Publisher";
+}
+
+<div class="container mt-4">
+    <div class="card border-danger shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h3 class="mb-0">Delete Confirmation</h3>
+        </div>
+        <div class="card-body">
+            <p class="lead">Are you sure you want to delete the following publisher?</p>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3">Publisher Name</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3">Country</dt>
+                <dd class="col-sm-9">@(Model.Country ?? "Not specified")</dd>
+            </dl>
+
+            <div class="alert alert-warning">
+                <strong>Warning:</strong> Deleting this publisher will fail if there are still board games assigned to them in the database.
+            </div>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

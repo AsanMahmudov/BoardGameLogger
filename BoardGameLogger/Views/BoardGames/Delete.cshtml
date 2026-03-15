@@ -1,0 +1,26 @@
+﻿@model BoardGameLogger.Web.Models.ViewModels.BoardGameIndexViewModel
+
+@{
+    ViewData["Title"] = "Delete Game";
+}
+
+<div class="container mt-4">
+    <div class="alert alert-danger shadow-sm">
+        <h3 class="alert-heading">Confirm Deletion</h3>
+        <p>Are you sure you want to permanently delete <strong>@Model.Title</strong> from the library?</p>
+        <hr>
+        <dl class="row">
+            <dt class="col-sm-3">Publisher:</dt>
+            <dd class="col-sm-9">@Model.PublisherName</dd>
+
+            <dt class="col-sm-3">Year:</dt>
+            <dd class="col-sm-9">@Model.YearPublished</dd>
+        </dl>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Yes, Delete Forever</button>
+            <a asp-action="Index" class="btn btn-secondary">No, Take Me Back</a>
+        </form>
+    </div>
+</div>

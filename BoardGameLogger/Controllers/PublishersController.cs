@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BoardGameLogger.Web.Controllers
 {
-    public class PublisherController : Controller
+    public class PublishersController : Controller
     {
         private readonly IPublisherService _publisherService;
 
-        public PublisherController(IPublisherService publisherService)
+        public PublishersController(IPublisherService publisherService)
         {
             _publisherService = publisherService;
         }
@@ -44,8 +44,19 @@ namespace BoardGameLogger.Web.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
+        {
+            var publisher = await _publisherService.GetByIdAsync(id);
+            if (publisher == null)
+            {
+                return NotFound();
+            }
+            return View(publisher);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
@@ -54,6 +65,8 @@ namespace BoardGameLogger.Web.Controllers
             }
             catch (InvalidOperationException)
             {
+                // This handles cases where the publisher doesn't exist 
+                // or has database-level foreign key constraints
                 return NotFound();
             }
         }
