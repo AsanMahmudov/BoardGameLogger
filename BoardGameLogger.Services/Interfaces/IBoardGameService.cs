@@ -21,5 +21,9 @@ namespace BoardGameLogger.Core.Interfaces
         Task DeleteGameAsync(int id);
 
         Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id);
+
+        Task<LoanGameFormModel?> GetLoanFormAsync(int id);
+
+        Task AddLoanAsync(LoanGameFormModel model);
     }
 }

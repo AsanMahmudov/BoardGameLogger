@@ -16,10 +16,7 @@ namespace BoardGameLogger.Core.Services
     public class BoardGameService : IBoardGameService
     {
 
-        public BoardGameService(BoardGameLoggerDbContext _context)
-        {
-            this._Dbcontext = _context;
-        }
+        public BoardGameService(BoardGameLoggerDbContext _context) => this._Dbcontext = _context;
 
         private BoardGameLoggerDbContext _Dbcontext;
         public async Task AddGameAsync(BoardGameFormModel model)
@@ -84,13 +81,16 @@ namespace BoardGameLogger.Core.Services
                 .Where(g => g.Id == id)
                 .Select(g => new BoardGameFormModel
                 {
+
                     Title = g.Title,
                     YearPublished = g.YearPublished,
                     MinPlayers = g.MinPlayers,
                     MaxPlayers = g.MaxPlayers,
                     Description = g.Description,
                     SelectedPublisherId = g.PublisherId
-                }).FirstOrDefaultAsync();
+
+                })
+                .FirstOrDefaultAsync();
 
             if (boardGame != null)
             {
@@ -108,9 +108,7 @@ namespace BoardGameLogger.Core.Services
             var boardGame = await _Dbcontext.BoardGames.FindAsync(id);
 
             if (boardGame == null)
-            {
                 throw new InvalidOperationException("Board game not found.");   
-            }
 
             _Dbcontext.BoardGames.Remove(boardGame);
             await _Dbcontext.SaveChangesAsync();
@@ -119,7 +117,7 @@ namespace BoardGameLogger.Core.Services
 
         public async Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id)
         {
-           var gameDetails = await _Dbcontext.BoardGames
+            BoardGameDetailsViewModel? gameDetails = await _Dbcontext.BoardGames
                 .Include(g => g.Publisher)
                 .Where(g => g.Id == id)
                 .Select(g => new BoardGameDetailsViewModel
@@ -136,10 +134,42 @@ namespace BoardGameLogger.Core.Services
             if (gameDetails == null)
                 throw new InvalidOperationException("Board game wasn't found.");
 
-
-
-
             return gameDetails;
+        }
+
+        public async Task<LoanGameFormModel?> GetLoanFormAsync(int id)
+        {
+           var boardGame = await _Dbcontext.BoardGames.FindAsync(id);
+            
+            if (boardGame == null)
+                throw new InvalidOperationException("Board game wasn't found.");
+
+            var loanForm = new LoanGameFormModel
+            {
+                BoardGameId = boardGame.Id,
+                BoardGameTitle = boardGame.Title
+            };
+
+            return loanForm;
+        }
+
+        public async Task AddLoanAsync(LoanGameFormModel model)
+        {
+            bool loanExists = await _Dbcontext.LoanLogs.Include(l => l.BoardGame)
+                .AnyAsync(g => g.BorrowerName == model.BorrowerName && g.BoardGame.Title == model.BoardGameTitle);
+
+            if (loanExists)
+                throw new InvalidOperationException("Board game is already in library.");
+
+            LoanLog newLoan = new LoanLog
+            {
+                BorrowerName = model.BorrowerName,
+                BoardGameId = model.BoardGameId,
+                LoanDate = model.LoanDate
+            };
+
+            _Dbcontext.LoanLogs.Add(newLoan);
+            await _Dbcontext.SaveChangesAsync();
         }
     }
 }
