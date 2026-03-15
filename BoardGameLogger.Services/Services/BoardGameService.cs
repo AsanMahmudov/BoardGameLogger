@@ -117,9 +117,9 @@ namespace BoardGameLogger.Core.Services
 
         }
 
-        public Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id)
+        public async Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id)
         {
-           var gameDetails = _Dbcontext.BoardGames
+           var gameDetails = await _Dbcontext.BoardGames
                 .Include(g => g.Publisher)
                 .Where(g => g.Id == id)
                 .Select(g => new BoardGameDetailsViewModel

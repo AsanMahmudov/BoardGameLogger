@@ -1,0 +1,31 @@
+﻿@model BoardGameLogger.Core.ViewModels.BoardGameDetailsViewModel
+
+@{
+    ViewData["Title"] = "Board Game Details";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h2 class="mb-0">@Model.Title</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Published Year:</strong> @Model.YearPublished</p>
+                    <p><strong>Publisher:</strong> @Model.PublisherName</p>
+                    <p><strong>Players:</strong> @Model.MinPlayers to @Model.MaxPlayers players</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Description</h5>
+                    <hr />
+                    <p>@Model.Description</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to Library</a>
+        </div>
+    </div>
+</div>
