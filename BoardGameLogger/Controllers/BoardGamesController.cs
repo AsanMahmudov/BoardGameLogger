@@ -132,5 +132,15 @@ namespace BoardGameLogger.Web.Controllers
                 return NotFound();
             }
         }
-    }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var gameDetails = await _boardGameService.GetGameDetailsAsync(id);
+
+            if (gameDetails == null)
+                return NotFound();
+
+            return View(gameDetails);
+        }
 }
