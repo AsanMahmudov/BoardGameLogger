@@ -19,5 +19,7 @@ namespace BoardGameLogger.Core.Interfaces
         Task EditGameAsync(int id, BoardGameFormModel model);
 
         Task DeleteGameAsync(int id);
+
+        Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id);
     }
 }

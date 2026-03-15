@@ -116,5 +116,30 @@ namespace BoardGameLogger.Core.Services
             await _Dbcontext.SaveChangesAsync();
 
         }
+
+        public Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id)
+        {
+           var gameDetails = _Dbcontext.BoardGames
+                .Include(g => g.Publisher)
+                .Where(g => g.Id == id)
+                .Select(g => new BoardGameDetailsViewModel
+                {
+                    Id = g.Id,
+                    Title = g.Title,
+                    YearPublished = g.YearPublished,
+                    MinPlayers = g.MinPlayers,
+                    MaxPlayers = g.MaxPlayers,
+                    Description = g.Description,
+                    PublisherName = g.Publisher.Name
+                }).FirstOrDefaultAsync();
+
+            if (gameDetails == null)
+                throw new InvalidOperationException("Board game wasn't found.");
+
+
+
+
+            return gameDetails;
+        }
     }
 }

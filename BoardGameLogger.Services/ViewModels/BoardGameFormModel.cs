@@ -18,7 +18,7 @@ namespace BoardGameLogger.Core.ViewModels
         public string Title { get; set; } = null!;
 
         [Required]
-        [Range(1800, 2100)] // Ensures a realistic year
+        [Range(1800, 2100)] 
         public int YearPublished { get; set; }
 
         [Range(1, 100)]
