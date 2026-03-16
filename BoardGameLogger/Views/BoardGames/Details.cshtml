@@ -8,8 +8,16 @@
     <div class="card shadow-sm">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <h2 class="mb-0">@Model.Title</h2>
-            @* Link to the Loans controller we planned earlier *@
-            <a asp-controller="Loans" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-outline-light">Loan this Game</a>
+            @* hides the loan button if the game is currently loaned out  *@
+            @if (!Model.LoanLogs.Any())
+            {
+                <a asp-controller="Loans" asp-action="Create" asp-route-id="@Model.Id"
+                   class="btn btn-outline-light">Loan this Game</a>
+            }
+            else
+            {
+                <span class="badge bg-warning text-dark">Currently Loaned Out</span>
+            }
         </div>
         <div class="card-body">
             <div class="row">

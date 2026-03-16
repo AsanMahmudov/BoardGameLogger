@@ -20,7 +20,9 @@
                     <input asp-for="LoanDate" class="form-control" type="date" />
                 </div>
 
-                <button type="submit" class="btn btn-primary">Confirm Loan</button>
+                <button type="submit" class="btn btn-primary" onclick="this.disabled=true;this.form.submit();">
+                    Add Loan
+                </button>
                 <a asp-controller="BoardGames" asp-action="Details" asp-route-id="@Model.BoardGameId" class="btn btn-secondary">Cancel</a>
             </form>
         </div>

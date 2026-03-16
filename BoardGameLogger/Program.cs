@@ -18,6 +18,7 @@ builder.Services.AddDbContext<BoardGameLoggerDbContext>(options =>
 
 builder.Services.AddScoped<IBoardGameService, BoardGameService>();
 builder.Services.AddScoped<IPublisherService, PublisherService>();
+builder.Services.AddScoped<ILoanGameService, LoanGameService>();
 
 var app = builder.Build();
 

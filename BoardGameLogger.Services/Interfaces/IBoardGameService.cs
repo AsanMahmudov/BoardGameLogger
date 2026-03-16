@@ -22,6 +22,8 @@ namespace BoardGameLogger.Core.Interfaces
 
         Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id);
 
+        Task<bool> IsGameLoanedAsync(int gameId);
+
 
     }
 }

@@ -26,6 +26,7 @@ namespace BoardGameLogger.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PublisherFormModel model)
         {
             if (!ModelState.IsValid)
@@ -56,6 +57,7 @@ namespace BoardGameLogger.Web.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try

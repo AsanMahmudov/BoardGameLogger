@@ -6,6 +6,7 @@
             <tr>
                 <th>Borrower Name</th>
                 <th>Date borrowed</th>
+                <th>Actions</th> @* New Column *@
             </tr>
         </thead>
         <tbody>
@@ -13,8 +14,15 @@
             {
                 <tr>
                     <td>@loan.BorrowerName</td>
-                    @* "g" displays the date and time, like: 3/16/2026 5:22 PM *@
                     <td>@loan.LoanDate.ToString("g")</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-success"
+                                data-bs-toggle="modal" data-bs-target="#returnModal-@loan.Id">
+                            Mark Returned
+                        </button>
+
+                        <partial name="_ReturnConfirmationPartial" model="loan" />
+                    </td>
                 </tr>
             }
         </tbody>

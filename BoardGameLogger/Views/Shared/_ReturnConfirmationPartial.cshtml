@@ -1,0 +1,25 @@
+﻿@model BoardGameLogger.Core.ViewModels.BoardGameLoanInfoViewModel
+
+<div class="modal fade" id="returnModal-@Model.Id" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="returnModalLabel">Confirm Return</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to mark the game borrowed by <strong>@Model.BorrowerName</strong> as returned?
+            </div>
+            <div class="modal-footer">
+                <form asp-controller="Loans" asp-action="Return" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    @* We grab the Game ID from the URL route to know where to redirect back to *@
+                    <input type="hidden" name="gameId" value="@ViewContext.RouteData.Values["id"]" />
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Confirm Return</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

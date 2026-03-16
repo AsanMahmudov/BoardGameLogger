@@ -136,6 +136,7 @@ namespace BoardGameLogger.Core.Services
                 PublisherName = game.Publisher.Name,
                 LoanLogs = game.LoanLogs.Select(l => new BoardGameLoanInfoViewModel
                 {
+                    Id = l.Id,
                     BorrowerName = l.BorrowerName,
                     LoanDate = l.LoanDate
                 }).ToList()
@@ -144,5 +145,10 @@ namespace BoardGameLogger.Core.Services
 
             return viewModelToReturn;
         }
+        public async Task<bool> IsGameLoanedAsync(int gameId)
+        {
+            return await _Dbcontext.LoanLogs.AnyAsync(l => l.BoardGameId == gameId);
+        }
+
     }
 }
