@@ -19,5 +19,7 @@ namespace BoardGameLogger.Core.ViewModels
         public int MaxPlayers { get; set; }
         public string Description { get; set; } = null!;
         public string PublisherName { get; set; }
+
+        public List<BoardGameLoanInfoViewModel> LoanLogs { get; set; } = new List<BoardGameLoanInfoViewModel>();
     }
 }

@@ -117,24 +117,32 @@ namespace BoardGameLogger.Core.Services
 
         public async Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id)
         {
-            BoardGameDetailsViewModel? gameDetails = await _Dbcontext.BoardGames
+            // Adding .Include for LoanLogs so we can see history
+            var game = await _Dbcontext.BoardGames
                 .Include(g => g.Publisher)
-                .Where(g => g.Id == id)
-                .Select(g => new BoardGameDetailsViewModel
+                .Include(g => g.LoanLogs)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (game == null) return null;
+
+          var viewModelToReturn = new BoardGameDetailsViewModel
+            {
+                Id = game.Id,
+                Title = game.Title,
+                YearPublished = game.YearPublished,
+                MinPlayers = game.MinPlayers,
+                MaxPlayers = game.MaxPlayers,
+                Description = game.Description,
+                PublisherName = game.Publisher.Name,
+                LoanLogs = game.LoanLogs.Select(l => new BoardGameLoanInfoViewModel
                 {
-                    Id = g.Id,
-                    Title = g.Title,
-                    YearPublished = g.YearPublished,
-                    MinPlayers = g.MinPlayers,
-                    MaxPlayers = g.MaxPlayers,
-                    Description = g.Description,
-                    PublisherName = g.Publisher.Name
-                }).FirstOrDefaultAsync();
+                    BorrowerName = l.BorrowerName,
+                    LoanDate = l.LoanDate
+                }).ToList()
+            };
 
-            if (gameDetails == null)
-                throw new InvalidOperationException("Board game wasn't found.");
 
-            return gameDetails;
+            return viewModelToReturn;
         }
 
         public async Task<LoanGameFormModel?> GetLoanFormAsync(int id)

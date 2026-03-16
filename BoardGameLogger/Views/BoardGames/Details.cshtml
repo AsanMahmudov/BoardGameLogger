@@ -6,8 +6,10 @@
 
 <div class="container mt-4">
     <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <h2 class="mb-0">@Model.Title</h2>
+            @* Link to the Loans controller we planned earlier *@
+            <a asp-controller="Loans" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-outline-light">Loan this Game</a>
         </div>
         <div class="card-body">
             <div class="row">
@@ -20,6 +22,23 @@
                     <h5>Description</h5>
                     <hr />
                     <p>@Model.Description</p>
+                </div>
+            </div>
+
+            @* Loan History Section *@
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h5>Loan History</h5>
+                    <hr />
+                    @if (Model.LoanLogs.Any())
+                    {
+                        // using a partial view
+                        <partial name="_LoanHistoryPartial" model="Model.LoanLogs" />
+                    }
+                    else
+                    {
+                        <p class="text-muted italic">This game hasn't been loaned out yet.</p>
+                    }
                 </div>
             </div>
         </div>

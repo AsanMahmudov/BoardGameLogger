@@ -1,0 +1,22 @@
+﻿@model IEnumerable<BoardGameLogger.Core.ViewModels.BoardGameLoanInfoViewModel>
+
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>Borrower Name</th>
+                <th>Date borrowed</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var loan in Model)
+            {
+                <tr>
+                    <td>@loan.BorrowerName</td>
+                    @* "g" displays the date and time, like: 3/16/2026 5:22 PM *@
+                    <td>@loan.LoanDate.ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
