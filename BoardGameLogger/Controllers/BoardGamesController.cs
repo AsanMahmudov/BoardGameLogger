@@ -11,13 +11,13 @@ namespace BoardGameLogger.Web.Controllers
         private readonly IBoardGameService _boardGameService;
         private readonly IPublisherService _publisherService;
 
+        // Constructor injection - setting up our services so we can talk to the DB
         public BoardGamesController(IBoardGameService boardGameService, IPublisherService publisherService)
         {
             _boardGameService = boardGameService;
             _publisherService = publisherService;
         }
 
-        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var boardGames = await _boardGameService.GetAllGamesAsync();
@@ -29,6 +29,7 @@ namespace BoardGameLogger.Web.Controllers
         {
             var publisherData = await _publisherService.GetAllPublishersAsync();
 
+            // We need to populate the dropdown list for publishers here
             var model = new BoardGameFormModel
             {
                 Publishers = publisherData.Select(p => new SelectListItem
@@ -42,9 +43,10 @@ namespace BoardGameLogger.Web.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken] // Security check to prevent CSRF attacks
         public async Task<IActionResult> Create(BoardGameFormModel model)
         {
+            // If the user missed a field, we send them back to the form with the errors
             if (!ModelState.IsValid)
             {
                 var publisherData = await _publisherService.GetAllPublishersAsync();
@@ -66,12 +68,10 @@ namespace BoardGameLogger.Web.Controllers
         {
             var model = await _boardGameService.GetGameByIdAsync(id);
 
-            if (model == null)
-            {
-                return NotFound();
-            }
+            if (model == null) return NotFound();
 
             var publisherData = await _publisherService.GetAllPublishersAsync();
+
             model.Publishers = publisherData.Select(p => new SelectListItem
             {
                 Value = p.Id.ToString(),
@@ -105,20 +105,14 @@ namespace BoardGameLogger.Web.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var game = await _boardGameService.GetGameByIdAsync(id);
+            if (game == null) return NotFound();
 
-            if (game == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = new BoardGameIndexViewModel
+            return View(new BoardGameIndexViewModel
             {
                 Id = id,
                 Title = game.Title,
                 YearPublished = game.YearPublished
-            };
-
-            return View(viewModel);
+            });
         }
 
         [HttpPost, ActionName("Delete")]
@@ -136,13 +130,10 @@ namespace BoardGameLogger.Web.Controllers
             }
         }
 
-        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var gameDetails = await _boardGameService.GetGameDetailsAsync(id);
-
-            if (gameDetails == null)
-                return NotFound();
+            if (gameDetails == null) return NotFound();
 
             return View(gameDetails);
         }

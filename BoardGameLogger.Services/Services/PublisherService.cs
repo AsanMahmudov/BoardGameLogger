@@ -40,13 +40,22 @@ namespace BoardGameLogger.Core.Services
         }
         public async Task DeletePublisherAsync(int id)
         {
-            //getting the publisher to delete first so we can remove it from the DB
-            Publisher? publisherToDelete = await _Dbcontext.Publishers.FindAsync(id);
+            // Eager loading the BoardGames so we can check if the list is empty
+            var publisherToDelete = await _Dbcontext.Publishers
+                .Include(p => p.BoardGames)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (publisherToDelete == null)
+            {
                 throw new InvalidOperationException("Publisher not found.");
+            }
 
-            //saving changes to DB
+            // We don't want to delete a publisher if they still have games assigned to them
+            if (publisherToDelete.BoardGames.Any())
+            {
+                throw new InvalidOperationException("Cannot delete publisher: They still have games assigned to them.");
+            }
+
             _Dbcontext.Publishers.Remove(publisherToDelete);
             await _Dbcontext.SaveChangesAsync();
         }

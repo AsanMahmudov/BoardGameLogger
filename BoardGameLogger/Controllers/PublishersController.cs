@@ -20,26 +20,20 @@ namespace BoardGameLogger.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PublisherFormModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            if (!ModelState.IsValid) return View(model);
 
             try
             {
                 await _publisherService.AddPublisherAsync(model);
                 return RedirectToAction(nameof(Index));
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 return View(model);
             }
@@ -49,10 +43,8 @@ namespace BoardGameLogger.Web.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var publisher = await _publisherService.GetByIdAsync(id);
-            if (publisher == null)
-            {
-                return NotFound();
-            }
+            if (publisher == null) return NotFound();
+
             return View(publisher);
         }
 

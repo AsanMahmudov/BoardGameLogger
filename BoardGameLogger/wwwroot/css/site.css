@@ -21,14 +21,12 @@ body {
   margin-bottom: 60px;
 }
 
-/* 1. Force the whole page to be at least screen-height */
 html {
     min-height: 100%;
     position: relative;
 }
 
 body {
-    /* Margin bottom should be the same height as your footer */
     margin-bottom: 60px;
 }
 
@@ -36,7 +34,7 @@ body {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 60px; /* Force a consistent height */
-    line-height: 60px; /* Center text vertically */
+    height: 60px;
+    line-height: 60px;
     background-color: white;
 }
