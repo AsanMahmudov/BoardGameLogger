@@ -1,0 +1,29 @@
+﻿@using BoardGameLogger.Core.ViewModels
+@model IEnumerable<LoanGameViewModel>
+
+<div class="container">
+    <h2>All Active and Past Loans</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Game</th>
+                <th>Borrower</th>
+                <th>Date Borrowed</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var loan in Model)
+            {
+                <tr>
+                    <td>@loan.BoardGameTitle</td>
+                    <td>@loan.BorrowerName</td>
+                    <td>@loan.LoanDate.ToShortDateString()</td>
+                    <td>
+                        <a asp-controller="BoardGames" asp-action="Details" asp-route-id="@loan.BoardGameId" class="btn btn-info btn-sm">View Game</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

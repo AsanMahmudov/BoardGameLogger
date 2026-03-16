@@ -67,5 +67,21 @@ namespace BoardGameLogger.Core.Services
                 await _Dbcontext.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<LoanGameViewModel>> GetAllLoansAsync()
+        {
+            IEnumerable<LoanGameViewModel> loansToBeReturned = await _Dbcontext.LoanLogs.Include(l => l.BoardGame)
+                .Select(l => new LoanGameViewModel
+                {
+                    Id = l.Id,
+                    BorrowerName = l.BorrowerName,
+                    BoardGameTitle = l.BoardGame.Title,
+                    LoanDate = l.LoanDate,
+                    BoardGameId = l.BoardGameId
+                    
+                }).ToListAsync();
+
+            return loansToBeReturned;
+        }
     }
 }

@@ -14,5 +14,7 @@ namespace BoardGameLogger.Core.Interfaces
         Task AddLoanAsync(LoanGameFormModel model);
 
         Task ReturnGameAsync(int loanId);
+
+        Task<IEnumerable<LoanGameViewModel>> GetAllLoansAsync();
     }
 }

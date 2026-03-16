@@ -58,5 +58,15 @@ namespace BoardGameLogger.Web.Controllers
             // Redirect back to the game details to see the updated list
             return RedirectToAction("Details", "BoardGames", new { id = gameId });
         }
+
+
+        [HttpGet]
+
+        public async Task<IActionResult> Index()
+        {
+            var loanedGames = await _loanGameService.GetAllLoansAsync();
+            return View(loanedGames);
+        }
+
     }
 }
