@@ -15,12 +15,13 @@ namespace BoardGameLogger.Core.Services
 {
     public class BoardGameService : IBoardGameService
     {
-
+        // We inject DbContext through dependency injection 
         public BoardGameService(BoardGameLoggerDbContext _context) => this._Dbcontext = _context;
 
         private BoardGameLoggerDbContext _Dbcontext;
         public async Task AddGameAsync(BoardGameFormModel model)
         {
+            //checking if game with same title and year already exists to prevent duplicates
             bool gameExists = await _Dbcontext.BoardGames
                 .AnyAsync(g => g.Title == model.Title && g.YearPublished == model.YearPublished);
 
@@ -29,7 +30,7 @@ namespace BoardGameLogger.Core.Services
                 throw new InvalidOperationException("Board game is already in library.");
             }
 
-
+            //mapping to data model
             BoardGame newGame = new BoardGame
             {
                 Title = model.Title,
@@ -40,12 +41,13 @@ namespace BoardGameLogger.Core.Services
                 PublisherId = model.SelectedPublisherId
             };
 
-
+            //saving to DB 
             await _Dbcontext.BoardGames.AddAsync(newGame);
             await _Dbcontext.SaveChangesAsync();
         }
         public async Task EditGameAsync(int id, BoardGameFormModel model)
         {
+            //retrieving the game to edit from DB
             var boardGame = await _Dbcontext.BoardGames.FindAsync(id);
 
             if (boardGame == null)
@@ -53,6 +55,7 @@ namespace BoardGameLogger.Core.Services
                 throw new InvalidOperationException("Board game not found.");
             }
 
+            //editing it's properties with the new values from the form
             boardGame.Title = model.Title;
             boardGame.YearPublished = model.YearPublished;
             boardGame.MinPlayers = model.MinPlayers;
@@ -60,10 +63,12 @@ namespace BoardGameLogger.Core.Services
             boardGame.Description = model.Description;
             boardGame.PublisherId = model.SelectedPublisherId;
 
+            //saving changes to the DB
             await _Dbcontext.SaveChangesAsync();
         }
         public async Task<IEnumerable<BoardGameIndexViewModel>> GetAllGamesAsync()
         {
+            // retrieving all the games from the Db and map to our view model. Pretty Self explanatory
             List<BoardGameIndexViewModel> games = await _Dbcontext.BoardGames
                 .Select(g => new BoardGameIndexViewModel
                 {
@@ -77,6 +82,7 @@ namespace BoardGameLogger.Core.Services
         }
         public async Task<BoardGameFormModel?> GetGameByIdAsync(int id)
         {
+            //retrieving game with ID and mapping to form model for edit form
             BoardGameFormModel? boardGame = await _Dbcontext.BoardGames
                 .Where(g => g.Id == id)
                 .Select(g => new BoardGameFormModel
@@ -94,27 +100,28 @@ namespace BoardGameLogger.Core.Services
 
             if (boardGame != null)
             {
-
+                //we populate Publishers property of the form model with all publishers from the DB to populate dropdown in edit form
                 var publishers = await _Dbcontext.Publishers
                     .Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name })
                     .ToListAsync();
 
             }
+
             return boardGame;
         }
-
         public async Task DeleteGameAsync(int id)
         {
+            //retrieving game to delete from DB
             var boardGame = await _Dbcontext.BoardGames.FindAsync(id);
 
             if (boardGame == null)
                 throw new InvalidOperationException("Board game not found.");   
 
+            // saving changes. Duhhh
             _Dbcontext.BoardGames.Remove(boardGame);
             await _Dbcontext.SaveChangesAsync();
 
         }
-
         public async Task<BoardGameDetailsViewModel?> GetGameDetailsAsync(int id)
         {
             // Adding .Include for LoanLogs so we can see history
@@ -123,9 +130,13 @@ namespace BoardGameLogger.Core.Services
                 .Include(g => g.LoanLogs)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
-            if (game == null) return null;
+            if (game == null) 
+                return null;
 
-          var viewModelToReturn = new BoardGameDetailsViewModel
+           /*we map the game to our details view model and also map the list of 
+             LoanLogs to a list of BoardGameLoanInfoViewModel to show 
+             loan history in details view and allow returning loaned games*/
+            var viewModelToReturn = new BoardGameDetailsViewModel
             {
                 Id = game.Id,
                 Title = game.Title,
@@ -147,8 +158,8 @@ namespace BoardGameLogger.Core.Services
         }
         public async Task<bool> IsGameLoanedAsync(int gameId)
         {
+            //needed for LoansController to check if game is already loaned before allowing user to create a new loan for it
             return await _Dbcontext.LoanLogs.AnyAsync(l => l.BoardGameId == gameId);
         }
-
     }
 }

@@ -14,51 +14,51 @@ namespace BoardGameLogger.Core.Services
     {
         private BoardGameLoggerDbContext _Dbcontext;
 
-        public PublisherService(BoardGameLoggerDbContext dbcontext)
-        {
-            _Dbcontext = dbcontext;
-        }
-
+        //injeting our DB context, as usual
+        public PublisherService(BoardGameLoggerDbContext dbcontext) => _Dbcontext = dbcontext;
         public async Task AddPublisherAsync(PublisherFormModel model)
         {
+
+            //checking if our publisher is in the DB already 
             bool publisherExists = await _Dbcontext.Publishers
-                .AnyAsync(p=> p.Name == model.Name && p.Country == model.Country);
+                .AnyAsync(p=> p.Name.ToLower() == model.Name.ToLower() && p.Country == model.Country);
 
 
             if (publisherExists)
-            {
                 throw new InvalidOperationException("Publisher is already in library.");
-            }
 
+            //mapping to EF model 
             Publisher newPublisher = new Publisher
             {
                 Name = model.Name,
                 Country = model.Country
             };
 
+            //saving to DB
             await _Dbcontext.Publishers.AddAsync(newPublisher);
             await _Dbcontext.SaveChangesAsync();
         }
-
         public async Task DeletePublisherAsync(int id)
         {
+            //getting the publisher to delete first so we can remove it from the DB
             Publisher? publisherToDelete = await _Dbcontext.Publishers.FindAsync(id);
 
             if (publisherToDelete == null)
-            {
                 throw new InvalidOperationException("Publisher not found.");
-            }
 
+            //saving changes to DB
             _Dbcontext.Publishers.Remove(publisherToDelete);
             await _Dbcontext.SaveChangesAsync();
         }
 
+        //necessary for our publisher Index Page and our board game dropdown to select publisher
         public async Task<IEnumerable<PublisherViewModel>> GetAllPublishersAsync()
         {
+            //mapping to view model
             List<PublisherViewModel> publishers = await _Dbcontext.Publishers
                 .Select(p => new PublisherViewModel
                 {
-                    Id = p.Id,
+                    Id = p.Id, 
                     Name = p.Name,
                     Country = p.Country
                 })
@@ -67,12 +67,15 @@ namespace BoardGameLogger.Core.Services
             return publishers;
         }
 
+        //necessary for our publisher delete function -
+        //the view passes the ID to the controller , the controller passes it here
         public async Task<PublisherViewModel?> GetByIdAsync(int id)
         {
            var publisher = await _Dbcontext.Publishers
                 .Where(p => p.Id == id)
                 .Select(p => new PublisherViewModel
                 {
+                    Id = id,
                     Name = p.Name,
                     Country = p.Country
                 })
