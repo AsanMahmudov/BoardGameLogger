@@ -144,40 +144,5 @@ namespace BoardGameLogger.Core.Services
 
             return viewModelToReturn;
         }
-
-        public async Task<LoanGameFormModel?> GetLoanFormAsync(int id)
-        {
-           var boardGame = await _Dbcontext.BoardGames.FindAsync(id);
-            
-            if (boardGame == null)
-                throw new InvalidOperationException("Board game wasn't found.");
-
-            var loanForm = new LoanGameFormModel
-            {
-                BoardGameId = boardGame.Id,
-                BoardGameTitle = boardGame.Title
-            };
-
-            return loanForm;
-        }
-
-        public async Task AddLoanAsync(LoanGameFormModel model)
-        {
-            bool loanExists = await _Dbcontext.LoanLogs.Include(l => l.BoardGame)
-                .AnyAsync(g => g.BorrowerName == model.BorrowerName && g.BoardGame.Title == model.BoardGameTitle);
-
-            if (loanExists)
-                throw new InvalidOperationException("Board game is already in library.");
-
-            LoanLog newLoan = new LoanLog
-            {
-                BorrowerName = model.BorrowerName,
-                BoardGameId = model.BoardGameId,
-                LoanDate = model.LoanDate
-            };
-
-            _Dbcontext.LoanLogs.Add(newLoan);
-            await _Dbcontext.SaveChangesAsync();
-        }
     }
 }
