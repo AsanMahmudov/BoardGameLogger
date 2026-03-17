@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BoardGameLogger.Core.ViewModels
 {
@@ -13,10 +7,12 @@ namespace BoardGameLogger.Core.ViewModels
         public int BoardGameId { get; set; }
         public string BoardGameTitle { get; set; } = null!;
 
-         [StringLength(256)]
+        [Required(ErrorMessage = "Please enter the name of the person borrowing the game.")]
+        [StringLength(256, MinimumLength = 2, ErrorMessage = "Borrower name must be between 2 and 256 characters.")]
         public string BorrowerName { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "The loan date is required.")]
+        [DataType(DataType.Date)]
         public DateTime LoanDate { get; set; } = DateTime.Now;
     }
 }
