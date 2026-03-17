@@ -18,6 +18,7 @@ namespace BoardGameLogger.Web.Controllers
             _publisherService = publisherService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var boardGames = await _boardGameService.GetAllGamesAsync();
@@ -104,14 +105,17 @@ namespace BoardGameLogger.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var game = await _boardGameService.GetGameByIdAsync(id);
+            var game = await _boardGameService.GetGameDetailsAsync(id);
             if (game == null) return NotFound();
+
+
 
             return View(new BoardGameIndexViewModel
             {
                 Id = id,
                 Title = game.Title,
-                YearPublished = game.YearPublished
+                YearPublished = game.YearPublished,
+                PublisherName = game.PublisherName
             });
         }
 
@@ -122,14 +126,18 @@ namespace BoardGameLogger.Web.Controllers
             try
             {
                 await _boardGameService.DeleteGameAsync(id);
+
+                TempData["SuccessMessage"] = "Board game deleted successfully!";
                 return RedirectToAction(nameof(Index));
             }
-            catch (InvalidOperationException)
+            catch (Exception ex)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "An error occurred while deleting the game.";
+                return RedirectToAction(nameof(Index));
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var gameDetails = await _boardGameService.GetGameDetailsAsync(id);

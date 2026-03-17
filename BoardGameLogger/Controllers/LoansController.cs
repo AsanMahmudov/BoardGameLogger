@@ -15,6 +15,7 @@ namespace BoardGameLogger.Web.Controllers
             _boardGameService = boardGameService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             // Shows a list of all lending history across the app

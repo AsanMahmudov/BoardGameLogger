@@ -48,8 +48,9 @@ namespace BoardGameLogger.Web.Controllers
             return View(publisher);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
+        [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
@@ -59,7 +60,7 @@ namespace BoardGameLogger.Web.Controllers
             }
             catch (InvalidOperationException)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
         }
     }

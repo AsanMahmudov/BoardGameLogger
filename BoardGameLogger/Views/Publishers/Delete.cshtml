@@ -24,7 +24,7 @@
                 <strong>Warning:</strong> Deleting this publisher will fail if there are still board games assigned to them in the database.
             </div>
 
-            <form asp-action="Delete" method="post">
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
                 <input type="hidden" asp-for="Id" />
                 <button type="submit" class="btn btn-danger">Confirm Delete</button>
                 <a asp-action="Index" class="btn btn-secondary">Cancel</a>
