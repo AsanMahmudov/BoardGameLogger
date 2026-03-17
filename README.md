@@ -24,7 +24,7 @@ Board Game Logger is a specialized web application designed for board game enthu
     * *Default SQL Express*: `Server=.\\SQLEXPRESS;Database=BoardGameLoggerDatabase;Trusted_Connection=True;MultipleActiveResultSets=true;encrypt=false`
 
 3.  **Apply Migrations**:
-    Open the **Package Manager Console**, set the **Default Project** to `BoardGameLogger.Core`, and run:
+    Open the **Package Manager Console**, set the **Default Project** to `BoardGameLogger.Data`, and run:
     `Update-Database`
     *(Note: This creates the schema and seeds initial test data automatically.)*
 
